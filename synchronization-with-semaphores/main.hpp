@@ -8,9 +8,12 @@
 #include <unistd.h>
 #include <thread>
 #include <iostream>
+#include <random>
 
 
 using namespace std;
+
+mutex io;
 
 class Semaphore {
     sem_t sem;
@@ -19,6 +22,8 @@ public:
     ~Semaphore();
     void signal();
     void wait();
+    int value();
+    void print_value();
 };
 
 class Message {
@@ -33,6 +38,10 @@ class Queues {
     queue<Message> q2;
     mutex mutex_q1;
     mutex mutex_q2;
+    Semaphore q1_busy;
+    Semaphore q1_r;
+    Semaphore q2_busy;
+    Semaphore q2_r;
     Semaphore q1_begin;
     Semaphore q2_begin;
     Semaphore q1_end;
@@ -40,11 +49,11 @@ class Queues {
 public:
     Queues();
 
-    void reader();
+    [[noreturn]] void reader();
 
-    void producer();
+    [[noreturn]] void producer();
 
-    void consumer();
+    [[noreturn]] void consumer();
 };
 
 #endif //UNTITLED_MAIN_HPP
